@@ -30,6 +30,15 @@ export class InMemoryDataService implements InMemoryDbService {
     products.push(this.generateProduct(4, 55, 2, 3));
     products.push(this.generateProduct(5, 24, 3, 3));
     products.push(this.generateProduct(6, 5, 3, 1));
+    products.push(this.generateProduct(7, 45, 2, 3));
+    products.push(this.generateProduct(8, 54, 3, 3));
+    products.push(this.generateProduct(9, 6, 3, 1));
+    products.push(this.generateProduct(10, 55, 2, 3));
+    products.push(this.generateProduct(11, 24, 3, 3));
+    products.push(this.generateProduct(12, 5, 3, 1));
+    products.push(this.generateProduct(13, 5, 2, 3));
+    products.push(this.generateProduct(14, 4, 3, 3));
+    products.push(this.generateProduct(15, 3, 3, 1));
 
     return { floors, products, sections};
   }

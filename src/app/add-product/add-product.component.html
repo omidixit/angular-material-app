@@ -1,0 +1,55 @@
+<form [formGroup]="productForm" novalidate (ngSubmit)="onSubmit()">
+  <h2 mat-dialog-title>Add new product</h2>
+  <mat-dialog-content>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Code" formControlName="code">
+            <mat-error *ngIf="productForm.controls['code'].hasError('required')">
+              Product code is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+            <mat-form-field class="full-width">
+              <input matInput placeholder="Quantity" formControlName="quantity">
+              <mat-error *ngIf="productForm.controls['quantity'].hasError('required')">
+                  Quantity is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+            <mat-form-field class="full-width">
+              <mat-select placeholder="Floor" formControlName="floor">
+                <mat-option *ngFor="let floor of floors" [value]="floor.id">
+                  {{ floor.name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="productForm.controls['floor'].hasError('required')">
+                Floor is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="col">
+            <mat-form-field class="full-width">
+              <mat-select placeholder="Section" formControlName="section">
+                <mat-option *ngFor="let section of sections" [value]="section.id">
+                  {{ section.name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="productForm.controls['section'].hasError('required')">
+                  Section is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+        </div>
+      </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+      <button mat-raised-button color="primary" type="submit">Submit</button>
+      <button mat-raised-button color="primary" (click)="dismiss()">Cancel</button>
+  </mat-dialog-actions>
+</form>

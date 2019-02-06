@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {MatPaginator, MatSort, MatTableDataSource, MatDialog} from '@angular/material';
 
 import { ProductService } from '../services/product.service';
 import { FloorService } from '../services/floor.service';
@@ -9,24 +9,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener, MatTreeNode } from '@angular/material/tree';
 import { ITreeNode, ITreeFlatNode } from '../models/treeNode';
-
-const ELEMENT_DATA: IProduct[] = [
-  {  "id": 1, "code": "MYTZ 123456", "quantity": 100, "floor": 1, "section": 1 },
-  {  "id": 2, "code": "UK 13462", "quantity": 12, "floor": 1, "section": 2 },
-  {  "id": 3, "code": "KOB 8472", "quantity": 1, "floor": 1, "section": 3 },
-  {  "id": 4, "code": "MYTZ 123456", "quantity": 100, "floor": 2, "section": 1 },
-  {  "id": 5, "code": "UK 13462", "quantity": 12, "floor": 2, "section": 2 },
-  {  "id": 6, "code": "KOB 8472", "quantity": 1, "floor": 2, "section": 3 },
-  {  "id": 7, "code": "MYTZ 123456", "quantity": 100, "floor": 3, "section": 1 },
-  {  "id": 8, "code": "UK 13462", "quantity": 12, "floor": 3, "section": 2 },
-  {  "id": 9, "code": "KOB 8472", "quantity": 1, "floor": 3, "section": 3 },
-  {  "id": 10, "code": "MYTZ 123456", "quantity": 100, "floor": 1, "section": 4 },
-  {  "id": 11, "code": "UK 13462", "quantity": 12, "floor": 1, "section": 5 },
-  {  "id": 12, "code": "KOB 8472", "quantity": 1, "floor": 1, "section": 6 },
-  {  "id": 13, "code": "MYTZ 123456", "quantity": 100, "floor": 1, "section": 5 },
-  {  "id": 14, "code": "UK 13462", "quantity": 12, "floor": 2, "section": 6 },
-  {  "id": 15, "code": "KOB 8472", "quantity": 1, "floor": 3, "section": 4 }
-];
+import { AddProductComponent } from '../add-product/add-product.component';
 
 const TREE_DATA: ITreeNode[] = [
   { id: 1, name: 'Floors', 
@@ -40,10 +23,7 @@ const TREE_DATA: ITreeNode[] = [
     children: [ 
       { id: 1, name: 'Section 1'}, 
       { id: 2, name: 'Section 2'}, 
-      { id: 3, name: 'Section 3'}, 
-      { id: 4, name: 'Section 4'}, 
-      { id: 5, name: 'Section 5'}, 
-      { id: 6, name: 'Section 6'}
+      { id: 3, name: 'Section 3'}
     ]
   }
 ];
@@ -57,7 +37,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   errorMessage: string;
   displayedColumns: string[] = ['select', 'id', 'code', 'quantity', 'floor', 'section'];
-  dataSource = new MatTableDataSource(ELEMENT_DATA);
+  dataSource = new MatTableDataSource<IProduct>();
   selection = new SelectionModel<IProduct>(true, []);
 
   private transformer = (node: ITreeNode, level: number) => {
@@ -77,7 +57,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   treeDataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-  constructor(private productService: ProductService,
+  constructor(private dialog: MatDialog,
+    private productService: ProductService,
     private floorService: FloorService,
     private sectionService: SectionService) { 
       this.treeDataSource.data = TREE_DATA;
@@ -94,8 +75,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     console.log(' In OnInit ');
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.productService.getProducts().subscribe(
+      products => {
+          this.dataSource = new MatTableDataSource(products);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+      },
+      error => this.errorMessage = <any>error
+    );
   }
 
   applyFilter(filterValue: string) {
@@ -133,5 +120,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.isAllSelected() ?
           this.selection.clear() :
           this.dataSource.data.forEach(row => this.selection.select(row));
+    }
+
+    openAddProductDialog() {
+      let dialogRef = this.dialog.open(AddProductComponent, {
+        width: '450px'
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('The dialog was closed', result);
+      });
     }
 }

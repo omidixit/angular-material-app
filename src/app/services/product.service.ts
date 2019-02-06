@@ -1,11 +1,12 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError, of } from 'rxjs';
 import { catchError, tap, delay } from 'rxjs/operators';
 
 import { IProduct } from '../models/product';
 
 const PRODUCT_CODES = ['ABC 1234'];
+const cudOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' })};
 
 @Injectable({
     providedIn: 'root'
@@ -34,6 +35,27 @@ export class ProductService {
         return this.httpClient.get<IProduct>(url).pipe(
         tap(data => console.log(`fetched product id=${id}`)),
         catchError(this.handleError<IProduct>(`getProduct id=${id}`))
+        );
+    }
+
+    addProduct(product: IProduct): Observable<IProduct> {
+        return this.httpClient.post<IProduct>(this.productUrl, product, cudOptions).pipe(
+            catchError(this.handleError('addProduct', product))
+        );
+    }
+
+    deleteProduct (product: IProduct): Observable<IProduct> {
+        const id = product.id;
+        const url = `${this.productUrl}/${id}`;
+    
+        return this.httpClient.delete<IProduct>(url, cudOptions).pipe(
+          catchError(this.handleError<IProduct>(`deleteProduct id=${id}`))
+        );
+    }
+
+    updateProduct (product: IProduct): Observable<null | IProduct> {
+        return this.httpClient.put<IProduct>(this.productUrl, product, cudOptions).pipe(
+          catchError(this.handleError('updateProduct', product))
         );
     }
 
