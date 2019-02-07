@@ -55,7 +55,7 @@ export class AddProductComponent implements OnInit {
       section: this.productForm.value.section 
     };
 
-    this.productService.addProduct(product).subscribe(
+    this.productService.addProduct(product).then(
       product => {
         console.log(' Product saved! ');
         this.dialogRef.close(product);

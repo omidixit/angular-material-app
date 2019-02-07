@@ -10,6 +10,7 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener, MatTreeNode } from '@angular/material/tree';
 import { ITreeNode, ITreeFlatNode } from '../models/treeNode';
 import { AddProductComponent } from '../add-product/add-product.component';
+import { Observable } from 'rxjs';
 
 const TREE_DATA: ITreeNode[] = [
   { id: 1, name: 'Floors', 
@@ -58,9 +59,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   treeDataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
   constructor(private dialog: MatDialog,
-    private productService: ProductService,
-    private floorService: FloorService,
-    private sectionService: SectionService) { 
+    private productService: ProductService) { 
       this.treeDataSource.data = TREE_DATA;
     }
 
@@ -75,14 +74,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     console.log(' In OnInit ');
-    this.productService.getProducts().subscribe(
-      products => {
-          this.dataSource = new MatTableDataSource(products);
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-      },
-      error => this.errorMessage = <any>error
-    );
+    this.loadProducts();
   }
 
   applyFilter(filterValue: string) {
@@ -122,6 +114,22 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           this.dataSource.data.forEach(row => this.selection.select(row));
     }
 
+    setDataSource() {
+      //this.dataSource = new MatTableDataSource(this.products);
+      this.dataSource.data = this.productService.dataStore.products;
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
+
+    loadProducts() {
+      this.productService.getProducts().subscribe(
+        products => {
+          this.setDataSource();
+        },
+        error => this.errorMessage = <any>error
+      );
+    }
+
     openAddProductDialog() {
       let dialogRef = this.dialog.open(AddProductComponent, {
         width: '450px'
@@ -129,6 +137,20 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
       dialogRef.afterClosed().subscribe(result => {
         console.log('The dialog was closed', result);
+        //this.products.push(result);
+        this.setDataSource();
+      });
+    }
+
+    deleteSelectedProducts() {
+      this.selection.selected.forEach(selectedProduct => {
+        this.productService.deleteProduct(selectedProduct).then(
+          product => {
+            console.log(' Product deleted! ');
+            this.setDataSource();
+          },
+          error => this.errorMessage = <any>error
+        );
       });
     }
 }

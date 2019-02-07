@@ -1,12 +1,21 @@
-<div class="grid-container">
-  <h1 class="mat-h1">Product Dashboard</h1>
+<mat-toolbar color="primary" class="mat-elevation-z6">
 
+  <button mat-button class="sidenav-toggle">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <span>Product Dashboard</span>
+
+  <span class="example-spacer"></span>
+
+</mat-toolbar>
+<div class="grid-container">
   <mat-grid-list cols="3" rowHeight="350px">
     <mat-grid-tile [colspan]="1" [rowspan]="2">
       <mat-card class="dashboard-card">
         <mat-card-header>
           <mat-card-title>
-            Filters:
+            Filters
             <button mat-icon-button class="more-button" [matMenuTriggerFor]="filterMenu" aria-label="Toggle menu">
               <mat-icon>more_vert</mat-icon>
             </button>
@@ -19,7 +28,6 @@
         </mat-card-header>
         <mat-card-content class="dashboard-card-content">
           <div>
-
               <mat-tree [dataSource]="treeDataSource" [treeControl]="treeControl">
                 <!-- This is the tree node template for leaf nodes -->
                 <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
@@ -50,13 +58,13 @@
       <mat-card class="dashboard-card">
         <mat-card-header>
           <mat-card-title>
-            Product List:
+            Product List
             <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu" xPosition="before">
               <button mat-menu-item (click)="openAddProductDialog()">Add Product</button>
-              <button mat-menu-item>Delete Product</button>
+              <button mat-menu-item (click)="deleteSelectedProducts()">Delete Product</button>
             </mat-menu>
           </mat-card-title>
         </mat-card-header>
@@ -126,3 +134,12 @@
   </mat-grid-list>
 
 </div>
+
+<footer class="docs-footer">
+  <div class="docs-footer-list">
+    <div class="docs-footer-logo">
+      <div class="footer-logo">
+      </div>
+    </div>
+  </div>
+</footer>
